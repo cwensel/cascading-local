@@ -49,6 +49,8 @@ import cascading.tuple.TupleEntrySchemeCollector;
 import cascading.tuple.TupleEntrySchemeIterator;
 import cascading.util.CloseableIterator;
 import cascading.util.Util;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -923,6 +925,19 @@ public class S3Tap extends Tap<Properties, InputStream, OutputStream> implements
       {
       String endpoint = properties.getProperty( S3TapProps.S3_ENDPOINT );
       String region = properties.getProperty( S3TapProps.S3_REGION, "us-east-1" );
+
+      if( properties.containsKey( S3TapProps.S3_PROXY_HOST ) )
+        {
+
+        ClientConfiguration config = new ClientConfiguration();
+        config.setProtocol(Protocol.HTTPS);
+        config.setProxyHost( properties.getProperty( S3TapProps.S3_PROXY_HOST ) );
+
+        if(  properties.containsKey( S3TapProps.S3_PROXY_PORT ) )
+          config.setProxyPort( Integer.valueOf( properties.getProperty( S3TapProps.S3_PROXY_PORT ) ) );
+
+        standard.withClientConfiguration(config);
+        }
 
       if( endpoint != null )
         standard.withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( endpoint, region ) );
