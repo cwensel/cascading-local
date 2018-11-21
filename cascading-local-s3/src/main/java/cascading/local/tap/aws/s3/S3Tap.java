@@ -59,6 +59,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.amazonaws.services.s3.transfer.model.UploadResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1177,14 +1178,22 @@ public class S3Tap extends Tap<Properties, InputStream, OutputStream> implements
 
         try
           {
-          if( LOG.isDebugEnabled() )
-            LOG.debug( "completing upload: {}", getIdentifier() );
 
-          upload.waitForUploadResult();
+          UploadResult uploadResult = upload.waitForUploadResult();
+          if(uploadResult!= null)
+            {
+            String uploadedS3Filename = uploadResult.getKey();
+            LOG.info("File uploaded with key: " + uploadedS3Filename);
+            transferManager.shutdownNow();
+            }
           }
         catch( InterruptedException exception )
           {
           // ignore
+          }
+        finally
+          {
+            transferManager.shutdownNow();
           }
         }
       };
