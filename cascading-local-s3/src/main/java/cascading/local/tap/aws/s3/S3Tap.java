@@ -36,6 +36,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import cascading.flow.FlowProcess;
+import cascading.property.PropertyUtil;
 import cascading.scheme.FileFormat;
 import cascading.scheme.Scheme;
 import cascading.tap.SinkMode;
@@ -930,12 +931,9 @@ public class S3Tap extends Tap<Properties, InputStream, OutputStream> implements
       if( properties.containsKey( S3TapProps.S3_PROXY_HOST ) )
         {
 
-        ClientConfiguration config = new ClientConfiguration();
-        config.setProtocol(Protocol.HTTPS);
-        config.setProxyHost( properties.getProperty( S3TapProps.S3_PROXY_HOST ) );
-
-        if(  properties.containsKey( S3TapProps.S3_PROXY_PORT ) )
-          config.setProxyPort( Integer.valueOf( properties.getProperty( S3TapProps.S3_PROXY_PORT ) ) );
+        ClientConfiguration config = new ClientConfiguration()
+          .withProxyHost( properties.getProperty( S3TapProps.S3_PROXY_HOST ) )
+          .withProxyPort( PropertyUtil.getIntProperty( properties, S3TapProps.S3_PROXY_PORT, -1 ) );
 
         standard.withClientConfiguration(config);
         }
@@ -1182,9 +1180,8 @@ public class S3Tap extends Tap<Properties, InputStream, OutputStream> implements
           UploadResult uploadResult = upload.waitForUploadResult();
           if(uploadResult!= null)
             {
-            String uploadedS3Filename = uploadResult.getKey();
-            LOG.info("File uploaded with key: " + uploadedS3Filename);
-            transferManager.shutdownNow();
+            if( LOG.isDebugEnabled() )
+              LOG.debug( "completed upload: {}, with key: {}", getIdentifier(), uploadResult.getKey() );
             }
           }
         catch( InterruptedException exception )
@@ -1193,7 +1190,7 @@ public class S3Tap extends Tap<Properties, InputStream, OutputStream> implements
           }
         finally
           {
-            transferManager.shutdownNow();
+            transferManager.shutdownNow(false);
           }
         }
       };
