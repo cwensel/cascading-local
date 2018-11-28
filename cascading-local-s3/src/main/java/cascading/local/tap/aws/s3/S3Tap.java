@@ -1188,7 +1188,7 @@ public class S3Tap extends Tap<Properties, InputStream, OutputStream> implements
           }
         finally
           {
-          transferManager.shutdownNow();
+          transferManager.shutdownNow(false);
           }
         }
       };
