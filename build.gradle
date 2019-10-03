@@ -77,7 +77,7 @@ subprojects {
     bintrayUser = repoUserName
     bintrayKey = repoPassword
 
-    org = 'cascading'
+    org = 'superflow'
     repo =  isFinalRelease ? 'release' : 'wip'
 
     overrideOnUpload = true
@@ -92,7 +92,7 @@ subprojects {
 
   task bintrayPublishBuild( dependsOn: [bintrayUpload, bintrayPublish]) {
   }
-  
+
   jar {
     inputs.property( "moduleName", moduleName )
     manifest {
