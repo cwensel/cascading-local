@@ -67,7 +67,6 @@ subprojects {
   ext.moduleName = name.replaceAll( '-', '.' )
 
   configurations {
-
     testArtifacts {
       extendsFrom testRuntime
     }
