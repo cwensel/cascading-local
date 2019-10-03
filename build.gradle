@@ -102,7 +102,7 @@ subprojects {
   javadoc.dependsOn << prepareDist
 
   javadoc {
-    def copyright = '<i>Copyright &#169; 2017-2018 Chris K Wensel. All Rights Reserved.</i>'
+    def copyright = '<i>Copyright &#169; 2017-2019 Chris K Wensel. All Rights Reserved.</i>'
 
     title = "Cascading ${releaseVersion}"
     destinationDir = file( "${distDir}/javadoc/${project.name}" )
@@ -217,7 +217,7 @@ subprojects {
 
 task allJavadoc( type: Javadoc, dependsOn: subprojects.javadoc ) {
 
-  def copyright = '<i>Copyright &#169; 2017 Chris K Wensel. All Rights Reserved.</i>'
+  def copyright = '<i>Copyright &#169; 2017-2019 Chris K Wensel. All Rights Reserved.</i>'
 
   title = "Cascading ${releaseVersion}"
   destinationDir = file( "${distDir}/javadoc/all/" )
